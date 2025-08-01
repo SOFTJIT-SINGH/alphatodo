@@ -38,7 +38,7 @@ export default function Home() {
     ) : (
       <h2 className='text-gray-500'>No Task Available</h2>
     )
-  const deleteHandler = (i) => {
+  const deleteHandler = (i: number) => {
     const temp = [...mainTask]
     temp.splice(i, 1)
     setMainTask(temp)
@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <main className='min-h-screen flex items-center justify-center bg-gray-100 p-8'>
       <div className='bg-white rounded-xl shadow-lg p-6 space-y-4 w-full max-w-xl'>
-        <h1 className='text-2xl font-bold text-center'>Todo With AI</h1>
+        <h1 className='text-2xl font-bold text-center'>Alpha Todo With AI </h1>
         <form
           onSubmit={submitHandler}
           className='flex flex-col sm:flex-row gap-4'
