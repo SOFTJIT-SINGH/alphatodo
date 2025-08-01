@@ -1,4 +1,5 @@
 'use client'
+
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -6,38 +7,51 @@ import { Input } from '@/components/ui/input'
 type Task = {
   task: string
   desc: string
+  completed: boolean
 }
 
 export default function Home() {
   const [task, setTask] = useState('')
   const [desc, setDesc] = useState('')
-  const [mainTask, setMainTask] = useState<Task[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
 
-  // Load from localStorage on mount
+  // Load tasks from localStorage on mount
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks')
     if (storedTasks) {
-      setMainTask(JSON.parse(storedTasks))
+      setTasks(JSON.parse(storedTasks))
     }
   }, [])
 
-  // Save to localStorage when tasks change
+  // Save tasks to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(mainTask))
-  }, [mainTask])
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!task.trim()) return
-    setMainTask([...mainTask, { task, desc }])
+
+    const newTask: Task = {
+      task,
+      desc,
+      completed: false,
+    }
+
+    setTasks([...tasks, newTask])
     setTask('')
     setDesc('')
   }
 
-  const deleteHandler = (i: number) => {
-    const temp = [...mainTask]
-    temp.splice(i, 1)
-    setMainTask(temp)
+  const deleteHandler = (index: number) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index)
+    setTasks(updatedTasks)
+  }
+
+  const toggleCompleted = (index: number) => {
+    const updatedTasks = [...tasks]
+    updatedTasks[index].completed = !updatedTasks[index].completed
+    setTasks(updatedTasks)
   }
 
   return (
@@ -65,13 +79,20 @@ export default function Home() {
 
         <div className='bg-slate-200 rounded-2xl p-4 mt-2'>
           <ul className='space-y-2'>
-            {mainTask.length > 0 ? (
-              mainTask.map((t, index) => (
+            {tasks.length > 0 ? (
+              tasks.map((t, index) => (
                 <li key={index} className='mb-2'>
                   <div className='bg-white p-2 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between'>
-                    <div>
-                      <h5 className='font-semibold'>{t.task}</h5>
-                      <h6 className='text-sm text-gray-600'>{t.desc}</h6>
+                    <div className='flex items-center gap-2'>
+                      <input
+                        type='checkbox'
+                        checked={t.completed}
+                        onChange={() => toggleCompleted(index)}
+                      />
+                      <div className={t.completed ? 'line-through text-gray-500' : ''}>
+                        <h5 className='font-semibold'>{t.task}</h5>
+                        <h6 className='text-sm text-gray-600'>{t.desc}</h6>
+                      </div>
                     </div>
                     <Button
                       type='button'
