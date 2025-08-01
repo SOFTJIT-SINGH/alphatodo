@@ -39,7 +39,7 @@ export default function Home() {
       <h2 className='text-gray-500'>No Task Available</h2>
     )
   const deleteHandler = (i) => {
-    let temp = [...mainTask]
+    const temp = [...mainTask]
     temp.splice(i, 1)
     setMainTask(temp)
   }
