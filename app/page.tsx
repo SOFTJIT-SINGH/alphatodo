@@ -68,10 +68,15 @@ export default function Home() {
       const data = await res.json()
       console.log('AI response:', data)
 
-      if (data.suggestion) {
-        setTask(data.suggestion)
+      if (
+        data.suggestion &&
+        data.suggestion.title &&
+        data.suggestion.description
+      ) {
+        setTask(data.suggestion.title)
+        setDesc(data.suggestion.description)
       } else {
-        alert('No suggestion received.')
+        alert('No suggestion received or response was in the wrong format.')
       }
     } catch (err) {
       console.error('AI Suggestion Error:', err)
