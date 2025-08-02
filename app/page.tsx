@@ -54,12 +54,40 @@ export default function Home() {
     setTasks(updatedTasks)
   }
 
+  // Ai suggestion
+  const getAISuggestion = async () => {
+    try {
+      const res = await fetch('/api/suggest', {
+        method: 'POST',
+        body: JSON.stringify({ input: task }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await res.json()
+      console.log('AI response:', data)
+
+      if (data.suggestion) {
+        setTask(data.suggestion)
+      } else {
+        alert('No suggestion received.')
+      }
+    } catch (err) {
+      console.error('AI Suggestion Error:', err)
+      alert('Error getting suggestion.')
+    }
+  }
+
   return (
     <main className='min-h-screen flex items-center justify-center bg-gray-100 p-8'>
       <div className='bg-white rounded-xl shadow-lg p-6 space-y-4 w-full max-w-xl'>
         <h1 className='text-2xl font-bold text-center'>Todo With AI</h1>
 
-        <form onSubmit={submitHandler} className='flex flex-col sm:flex-row gap-4'>
+        <form
+          onSubmit={submitHandler}
+          className='flex flex-col sm:flex-row gap-4'
+        >
           <Input
             placeholder='Enter Task'
             value={task}
@@ -72,24 +100,32 @@ export default function Home() {
             onChange={(e) => setDesc(e.target.value)}
             className='w-full'
           />
+          <Button type='button' onClick={getAISuggestion}>
+            💡 AI Suggest
+          </Button>
           <Button type='submit'>Add</Button>
         </form>
 
         <hr />
-
-        <div className='bg-slate-200 rounded-2xl p-4 mt-2'>
+        {/* Tasks */}
+        {/* <div className='rounded-2xl p-4 mt-2'> */}
+        <div className='rounded-2xl'>
           <ul className='space-y-2'>
             {tasks.length > 0 ? (
               tasks.map((t, index) => (
                 <li key={index} className='mb-2'>
-                  <div className='bg-white p-2 rounded shadow flex flex-col sm:flex-row sm:items-center justify-between'>
+                  <div className='bg-gray-200 dark:bg-gray-100 px-4 py-3 rounded-2xl shadow flex flex-col sm:flex-row sm:items-center justify-between'>
                     <div className='flex items-center gap-2'>
                       <input
                         type='checkbox'
                         checked={t.completed}
                         onChange={() => toggleCompleted(index)}
                       />
-                      <div className={t.completed ? 'line-through text-gray-500' : ''}>
+                      <div
+                        className={
+                          t.completed ? 'line-through text-gray-500' : ''
+                        }
+                      >
                         <h5 className='font-semibold'>{t.task}</h5>
                         <h6 className='text-sm text-gray-600'>{t.desc}</h6>
                       </div>
@@ -97,7 +133,7 @@ export default function Home() {
                     <Button
                       type='button'
                       onClick={() => deleteHandler(index)}
-                      className='bg-red-500 mt-2 sm:mt-0'
+                      className='bg-red-500 rounded-lg mt-2 sm:mt-0'
                     >
                       Delete
                     </Button>
