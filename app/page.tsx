@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { TaskChart } from '@/components/TaskChart';
 
 type Task = {
   task: string
@@ -84,10 +85,22 @@ export default function Home() {
     }
   }
 
+  // Chart data for completed vs pending tasks
+  // This is a simple representation, you can use libraries like Recharts for better visualization
+  const completedCount = tasks.filter((task) => task.completed).length
+  const pendingCount = tasks.length - completedCount
+  const chartData = [
+    { name: 'Completed', tasks: completedCount, fill: '#82ca9d' }, // green
+    { name: 'Pending', tasks: pendingCount, fill: '#ef4444' }, // red
+  ]
+
   return (
     <main className='min-h-screen flex items-center justify-center bg-gray-100 p-8'>
       <div className='bg-white rounded-xl shadow-lg p-6 space-y-4 w-full max-w-xl'>
         <h1 className='text-2xl font-bold text-center'>Todo With AI</h1>
+
+         {/* ✨ Add the chart here ✨
+        <TaskChart data={chartData} /> */}
 
         <form
           onSubmit={submitHandler}
@@ -150,6 +163,8 @@ export default function Home() {
             )}
           </ul>
         </div>
+              {/* ✨ Add the chart here ✨ */}
+       <TaskChart data={chartData} />
       </div>
     </main>
   )
