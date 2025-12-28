@@ -1,14 +1,22 @@
 'use server'
 
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
+import { GoogleGenerativeAI, SchemaType, type Schema } from '@google/generative-ai'
 
-// Define the strict structure we want from AI
-const todoSchema = {
+// 👇 FIX: Explicitly type this object as 'Schema'
+const todoSchema: Schema = {
   description: "A task suggestion",
   type: SchemaType.OBJECT,
   properties: {
-    title: { type: SchemaType.STRING, description: "Short title", nullable: false },
-    description: { type: SchemaType.STRING, description: "Detailed description", nullable: false },
+    title: {
+      type: SchemaType.STRING,
+      description: "Short title",
+      nullable: false,
+    },
+    description: {
+      type: SchemaType.STRING,
+      description: "Detailed description",
+      nullable: false,
+    },
   },
   required: ["title", "description"],
 }
@@ -18,11 +26,13 @@ export async function getAiSuggestion(userInput: string) {
   if (!apiKey) throw new Error("Missing API Key")
 
   const genAI = new GoogleGenerativeAI(apiKey)
+  
+  // Use the model you confirmed works (Gemini 2.5)
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-flash', 
     generationConfig: {
       responseMimeType: 'application/json',
-      responseSchema: todoSchema, // Force strict JSON
+      responseSchema: todoSchema,
     },
   })
 
